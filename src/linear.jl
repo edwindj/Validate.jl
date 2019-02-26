@@ -6,9 +6,10 @@ function is_linear_sub(e::Number)
   true
 end
 
+# TODO improve for :(a+b+c)!
 function is_linear_sub(e::Expr)
   if (e.args[1] in [:+, :-])
-    return is_linear_sub(e.args[2]) && is_linear_sub(e.args[3])
+    return all(map(is_linear_sub, e.args[2:end]))
   end
   if (e.args[1] == :*)
     return isa(e.args[2], Number) && is_linear_sub(e.args[3])
@@ -35,3 +36,4 @@ end
 
 e = :(x + 3 >= 2y)
 is_linear(e)
+is_linear(:(x/2))

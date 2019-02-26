@@ -1,3 +1,8 @@
+name = "Validate"
+uuid = "1fe76d52-2f97-11e9-17b6-557879f4d1f0"
+authors = ["Edwin de Jonge <edwindjonge@gmail.com>", "Mark van der Loo <markvanderloo@gmail.com>]
+version = "0.0.1"
+
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
