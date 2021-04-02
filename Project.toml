@@ -1,0 +1,7 @@
+name = "Validate"
+uuid = "7f493d04-8cd3-4e08-b512-76f264884e3b"
+authors = ["Edwin de Jonge <edwindjonge@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
