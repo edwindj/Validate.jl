@@ -1,25 +1,20 @@
-function is_linear(s::Any, sub = false)
-  false
-end
+# Sub expressions
 
-function is_linear(s::Symbol, sub = false)
-  sub
-end
+"Test if expression is part of a linear expression"
+is_linear_part(s::Any) = false
+is_linear_part(s::Symbol) = true
+is_linear_part(s::Real) = true
 
-function is_linear(s::Real, sub = false)
-  sub
-end
-
-function is_linear(e::Expr, sub = false)
+function is_linear_part(e::Expr)
   if !(e.head == :call)
     return false
   end
   
   op = e.args[1]
-  if (!sub)
-    is_lin = op in [:>, :<, :>=, :<=]
-  elseif op == :*
+  if op in [:*, :\]
     is_lin = e.args[2] isa Real
+  elseif op == :/
+    is_lin = e.args[3] isa Real
   else
     is_lin = op in [:+, :-]
   end
@@ -29,40 +24,51 @@ function is_linear(e::Expr, sub = false)
   end
 
   for part in e.args[2:end]
-    if !is_linear(part, true)
+    if !is_linear_part(part)
       return false
     end
   end
+
   true
 end
 
+"Test if expression is linear expression"
+is_linear(e) = false
+
+function is_linear(e::Expr)
+  if !(e.head == :call)
+    return false
+  end
+  
+  op = e.args[1]
+
+  if !(op in [:>, :<, :>=, :<=, :(==)])
+    return false
+  end
+
+  for part in e.args[2:end]
+    if !is_linear_part(part)
+      return false
+    end
+  end
+
+  true
+end
+
+is_linear_part(:x)
+is_linear_part("test")
+is_linear_part(:(y <= 1))
+is_linear_part(1)
 
 is_linear(:x)
 is_linear("test")
 is_linear(:(y <= 1))
 is_linear(1)
-is_linear(1, true)
-
 
 e = :(x + y > 1)
 is_linear(e)
 
-is_linear(:(3x), true)
+is_linear_part(:(3x))
 is_linear(:(3x+y >= 1))
-is_linear(:(x + 3(y+1)), true)
-
-
-# useful for rewriting it to Query.jl
-v = :x
-v1 = :(_.$v)
-
-
-
-test = "
-a > 1
-
-# comment
-b < 1
-"
-
-Meta.parse(test)
+is_linear_part(:(x + 3(y+1)))
+is_linear(:(x == 1))

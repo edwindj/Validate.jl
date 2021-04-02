@@ -1,14 +1,13 @@
-function extract_variables(s::Any, vars::Set{Symbol})
-  vars
+replace_variables(s::Any, vars::Set{Symbol}) = s
+
+function replace_variables(s::Symbol, vars::Set{Symbol})
+  if s in vars
+    return :(_.$s)
+  end
+  s
 end
 
-function extract_variables(s::Symbol, vars::Set{Symbol})
-  push!(vars, s)
-  vars
-end
-
-function extract_variables(e::Expr, vars::Set{Symbol} = Set{Symbol}())
- #TODO comparison operator
+function replace_variables(e::Expr, vars::Set{Symbol})
   parts = []
   if e.head in [:block, :if]
     parts =  e.args
@@ -18,23 +17,28 @@ function extract_variables(e::Expr, vars::Set{Symbol} = Set{Symbol}())
     parts = e.args[1:2:end]
   end
 
-  for part in parts
-    extract_variables(part, vars)
+
+  parts = map(part -> replace_variables(part, vars), parts)
+
+  if e.head in [:block, :if]
+    e.args = parts
+  elseif e.head == :call
+    e.args[2:end] = parts
+  elseif e.head == :comparison
+    e.args[1:2:end] = parts
   end
 
-  vars
+  e
 end
 
-function extract_variables(exprs::Array{Expr, 1}, vars::Set{Symbol} = Set{Symbol}())
-  for e in exprs
-    extract_variables(e, vars)
-  end
-  vars
+function replace_variables(exprs::Array{Expr, 1}, vars::Set{Symbol} = Set{Symbol}())
+  map(expr::Expr -> replace_variables(expr,vars), exprs)
 end
 
 
 e = :(x + 3y > 1 + z)
-extract_variables([e
-        ,:(if a > 1; b > 2; end)
-        ,:(w<v<1)
-        ])
+replace_variables(e, Set([:x,:z]))
+# extract_variables([e
+#         ,:(if a > 1; b > 2; end)
+#         ,:(w<v<1)
+#         ])

@@ -18,7 +18,7 @@ function is_categorical(e::Expr, sub = false)
 
   if (sub)
     op = e.args[1]
-    if op in [:in, :(==)]
+    if op in [:in, :(==), :∈, :∉, :!=]
       for part in e.args[2:end]
         if !is_categorical(part, true)
           return false

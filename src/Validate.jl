@@ -1,7 +1,8 @@
 module Validate
 
-
-greet() = print("Hello World!")
+# include("Rule.jl")
+include("replace_vars.jl")
+# include("Expr.jl")
 
 end # module
 
