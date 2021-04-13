@@ -34,11 +34,3 @@ end
 function replace_variables(exprs::Array{Expr, 1}, vars::Set{Symbol} = Set{Symbol}())
   map(expr::Expr -> replace_variables(expr,vars), exprs)
 end
-
-
-e = :(x + 3y > 1 + z)
-replace_variables(e, Set([:x,:z]))
-# extract_variables([e
-#         ,:(if a > 1; b > 2; end)
-#         ,:(w<v<1)
-#         ])

@@ -33,12 +33,12 @@ function is_categorical(e::Expr, sub = false)
   true
 end
 
-e = :(v in ["a", "b"])
+# e = :(v in ["a", "b"])
 
-is_categorical("a")
-is_categorical("a", true)
-is_categorical(["a"])
-is_categorical(["a"], true)
+# is_categorical("a")
+# is_categorical("a", true)
+# is_categorical(["a"])
+# is_categorical(["a"], true)
 
-is_categorical(e)
-is_categorical(e, true)
+# is_categorical(e)
+# is_categorical(e, true)
