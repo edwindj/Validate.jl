@@ -46,6 +46,11 @@ function is_linear(e::Expr)
     return false
   end
 
+  # this should be rewritten into a linear version
+  if is_linear_ratio(e.args[2])
+    return e.args[3] isa Real
+  end
+
   for part in e.args[2:end]
     if !is_linear_part(part)
       return false
@@ -53,6 +58,18 @@ function is_linear(e::Expr)
   end
 
   true
+end
+
+
+is_linear_ratio(a::Any) = false
+
+function is_linear_ratio(e::Expr)
+  if e.head == :call 
+    if e.args[1] in [:(/), :(\)]
+      return is_linear_part(e.args[2]) && is_linear_part(e.args[3])
+    end
+  end
+  false
 end
 
 # is_linear_part(:x)
