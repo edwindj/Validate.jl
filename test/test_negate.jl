@@ -5,13 +5,17 @@ using Test
 
   @test negate(:(!x)) == :x
 
+  @test negate(:(x)) == :(!x)
+
   @test negate(:(x == true)) == :(x == false)
 
   @test negate(:(x == false)) == :(x == true)
 
   @test negate(:(x == y)) == :(x != y)
   
-  @test negate(:(x > y)) == :(!(x > y))
+  @test negate(:(x != y)) == :(x == y)
+
+  @test negate(:(x > y)) == :((x <= y))
 
 end
 
@@ -22,3 +26,6 @@ end
 # :(a != 1) |> negate |> print
 # :(a == true) |> negate |> print
 # :(a == false) |> negate |> print
+
+:((a == 1) & (b == 1)) |> negate |> print
+:((a == 1) | (b == 1)) |> negate |> print

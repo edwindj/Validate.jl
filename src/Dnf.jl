@@ -16,15 +16,30 @@ function to_expr(dnf::Dnf)
 end
 
 function to_dnf(e::Expr)
-  if is_linear(e)
-    return Dnf([e])
+  chl = Channel{Expr}() do ch
+    to_dnf(e, ch)
+  end
+  expr = collect(chl)
+  Dnf(expr)
+end
+
+function to_dnf(e::Expr, ch::Channel{Expr})
+  if e.head != :call
+    return
   end
 
-  if is_categorical(e)
-    
+  if e.args[1] == :|
+    to_dnf(e.args[2], ch)
+    to_dnf(e.args[3], ch)
+    return
+  end
+  if is_linear(e)
+    put!(ch, e)
   end
 end
 
 # dnf = Dnf([:(x>1) , :(y<1), :(a==true)])
-# print(dnf)
 # to_expr(dnf)
+
+# e = :((x>1)| (z>1))
+# to_dnf(e)
